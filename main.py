@@ -41,6 +41,7 @@ QUARTER = 0.25
 # generate a report of all the resources
 #   loop through the resources dictionary and print the resource along with their quantity
 def generate_report():
+    print('--------------COFFE MACHINE RESOURCES--------------')
     for resource, quantity in resources.items():
         if resource == 'coffee':
             print(f'{resource}: {quantity}g')
@@ -68,6 +69,7 @@ def check_sufficient_resources(drink):
 def process_coins():
     while True:
         try:
+            print('-------------------TIME TO PAY------------------')
             print('Please enter some coins.')
             total = int(input('How many quarters: ')) * QUARTER
             total += int(input('How many nickles: ')) * NICKLE
@@ -110,6 +112,7 @@ def make_coffee(drink, choice):
 
 machine_is_on = True
 while machine_is_on:
+    print('----------------Welcome to the coffee machine program------------------')
     action = input('What would you like to make (espresso/latte/cappuccino): ').lower().strip()
     if action == "off":
         machine_is_on = False
@@ -121,6 +124,7 @@ while machine_is_on:
         if check_sufficient_resources(coffee):
             payment = process_coins()
             if check_successful_transaction(payment, coffee):
+                print('-----------Transaction successful-----------')
                 make_coffee(coffee,action)
     else:
         print('\n' * 10)
