@@ -1,4 +1,3 @@
-
 MENU = {
     "espresso": {
         "ingredients": {
@@ -37,10 +36,12 @@ PENNIES = 0.01
 NICKLE = 0.05
 DIME = 0.1
 QUARTER = 0.25
+
+
 # generate a report of all the resources
 #   loop through the resources dictionary and print the resource along with their quantity
 def generate_report():
-    for resource,quantity in resources.items():
+    for resource, quantity in resources.items():
         if resource == 'coffee':
             print(f'{resource}: {quantity}g')
         else:
@@ -52,47 +53,57 @@ def generate_report():
 #  if the user decides to make a coffee, check the ingredients of the coffee chosen against the resources
 #      and tell the user that they can either make coffee or can't based on the comparison
 def check_sufficient_resources(drink):
-   for item in resources:
-       if resources[item] < drink['ingredients'][item]:
-           print(f'There not enough {item}')
-       else:
-           return True
-   return False
+    for item in drink['ingredients']:
+        if drink['ingredients'][item] > resources[item]:
+            print(f'There is not enough {item}')
+            return False
+    return True
+
+
+
 
 # process the payment in coins
 #  if the resources are efficient to make the chosen coffee, then ask the user to enter their money in coins
 #     calculate the user's total payment made
 def process_coins():
-    for _ in range(4):
-        total = int(input('How many quarters: ')) * QUARTER
-        total += int(input('How many nickles: ')) * NICKLE
-        total += int(input('How many pennies: ')) * PENNIES
-        total += int(input('How many dimes: ')) * DIME
+    while True:
+        try:
+            print('Please enter some coins.')
+            total = int(input('How many quarters: ')) * QUARTER
+            total += int(input('How many nickles: ')) * NICKLE
+            total += int(input('How many pennies: ')) * PENNIES
+            total += int(input('How many dimes: ')) * DIME
+            return total
+        except ValueError:
+            print('That is not a number')
 
-        return  total
+
+
 # ensure that the payment is successful and give the user change if they have entered more than enough for a coffee
 #    make sure that the payment is enough to buy the chosen coffee and when they pay too much, return them their change
 #    and when they don't have enough payment, then refund the user their money
 def check_successful_transaction(money_paid, drink):
-    if money_paid <  drink['cost']:
+    if money_paid < drink['cost']:
         print('Sorry, that is not enough, Money refunded!')
         return False
-    elif money_paid > drink['cost']:
-         change = money_paid - drink['cost']
-         print(f'Here is ${round(change, 2)} in change')
-         return True
-    else:
+    elif money_paid >= drink['cost']:
+        change = money_paid - drink['cost']
+        print(f'Here is ${round(change, 2)} in change')
+        global money
+        money += drink['cost']
         return True
+
+
 
 # make the drink for the user
 # once the payment is successful, then make the coffee for the user  and update the coffee resources
-def make_coffee(drink):
-    cost = drink['cost']
-    global money
+def make_coffee(drink, choice):
     for item in resources:
         if item in drink['ingredients']:
-          resources[item] -= drink['ingredients'][item]
-    money += cost
+            resources[item] -= drink['ingredients'][item]
+    print(f'Here is your {choice.title()} ☕, enjoy!')
+
+
 
 # turn off the machine
 #   when the user enters off the coffee machine turns off
@@ -105,14 +116,14 @@ while machine_is_on:
         print('Goodbye 🙂')
     elif action == 'report':
         generate_report()
+    elif action in MENU:
+        coffee = MENU[action]
+        if check_sufficient_resources(coffee):
+            payment = process_coins()
+            if check_successful_transaction(payment, coffee):
+                make_coffee(coffee,action)
     else:
-          coffee = MENU[action]
-
-          if check_sufficient_resources(coffee):
-              payment = process_coins()
-              if check_successful_transaction(payment,coffee):
-                  make_coffee(coffee)
-                  print(f'here is your {action.title()} ☕, enjoy!')
-
+        print('\n' * 10)
+        print('That is not in the Menu')
 
 
